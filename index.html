@@ -44,6 +44,7 @@
   .tabs {
     display: flex; background: white; padding: 0 10px;
     border-bottom: 2px solid var(--border); overflow-x: auto;
+    overflow-y: hidden; /* 新增：强制隐藏微小垂直滚动条 */
   }
   .tab {
     padding: 14px 20px; color: var(--muted); cursor: pointer;
@@ -187,6 +188,25 @@
   .mic-btn.recording { color: red; opacity: 1; animation: blink 1s infinite; }
   @keyframes blink { 50% { opacity: 0.2; } }
 
+  /* 新增：键盘聚焦时的高亮样式 */
+  .has-mic:focus { outline: 2px dashed var(--cyan); outline-offset: 2px; background: var(--light); }
+
+  /* ================= 语音锁定按钮样式 ================= */
+  #lockBtn {
+    background: var(--light);
+    border: 2px solid var(--cyan);
+    color: var(--cyan);
+    transition: all 0.2s;
+  }
+  #lockBtn:hover {
+    transform: scale(1.05);
+  }
+  #lockBtn.locked {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+  }
+
 </style>
 </head>
 <body>
@@ -195,29 +215,41 @@
   <div class="logo">🇩🇪</div>
   <div>
     <h1>达赫德语语音教程 - 第八版</h1>
-    <p>点击页面内任意字母、单词或句子即可标准发音</p>
+    <p>
+      🖱️ <b>鼠标</b>：点击文字发音，点击 🎤 录音对比<br>
+      ⌨️ <b>键盘</b>：用 <b>WASD</b> 或 <b>方向键</b> 切换单词；<b>空格</b> 发音；<b>回车</b> 开启/停止录音；
+    </p>
   </div>
 </header>
 
 <div class="controls">
   <div class="ctrl-group">
-    <label>🔊 语音引擎</label>
+    <label>🔊 语音引擎 (V)</label>
     <select id="voiceSelect" onchange="updateVoice()"><option value="">加载中...</option></select>
   </div>
   <div class="ctrl-group">
-    <label>🗣 语速</label>
-    <input type="range" min="0.5" max="1.5" step="0.1" value="0.8" oninput="updateRate(this.value)">
+    <label>🗣 语速 (+/-)</label>
+    <input type="range" id="rateSlider" min="0.5" max="1.5" step="0.1" value="0.8" oninput="updateRate(this.value)">
     <span id="rateVal" style="color:var(--cyan);font-weight:bold;font-size:13px;width:30px;">0.8×</span>
+  </div>
+  
+  <!-- 新增：语音锁定按钮 -->
+  <div class="ctrl-group">
+    <label>🔒 语音锁定 (L)</label>
+    <button id="lockBtn" onclick="toggleVoiceLock()" 
+            style="font-size:15px; padding:6px 16px; border-radius:6px; font-weight:bold; cursor:pointer; min-width:110px;">
+      🔓 未锁定
+    </button>
   </div>
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('vowellength')">主要长短音</div>
-  <div class="tab" onclick="switchTab('abc')">字母表</div>
-  <div class="tab" onclick="switchTab('abbr')">缩略词</div>
-  <div class="tab" onclick="switchTab('vowels')">元音组合</div>
-  <div class="tab" onclick="switchTab('consonants')">辅音组合</div>
-  <div class="tab" onclick="switchTab('test')">语音测试</div>
+  <div class="tab active" onclick="switchTab('vowellength')">主要长短音 (1)</div>
+  <div class="tab" onclick="switchTab('abc')">字母表 (2)</div>
+  <div class="tab" onclick="switchTab('abbr')">缩略词 (3)</div>
+  <div class="tab" onclick="switchTab('vowels')">元音组合 (4)</div>
+  <div class="tab" onclick="switchTab('consonants')">辅音组合 (5)</div>
+  <div class="tab" onclick="switchTab('test')">语音测试 (6)</div>
 </div>
 
 <div class="content">
@@ -1526,41 +1558,84 @@ function renderData() {
   });
 }
 
-// ================= Tab 切换 =================
+// ================= Tab 切换与自动聚焦 =================
 function switchTab(id) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  event.target.classList.add('active');
+  
+  // 智能寻找并高亮当前被激活的标签页
+  const activeTab = document.querySelector(`.tab[onclick*="'${id}'"]`);
+  if(activeTab) activeTab.classList.add('active');
+  
   document.getElementById('sec-' + id).classList.add('active');
+
+  // 切换完成后，延迟一下自动聚焦到本页的第一个单词
+  setTimeout(() => {
+    const firstItem = document.querySelector('#sec-' + id + ' .focusable-item');
+    if (firstItem) firstItem.focus();
+  }, 50);
 }
 
-// ================= 语音引擎设置 =================
+// ================= 语音引擎设置与锁定 =================
 let voices = [];
 let selectedVoice = null;
 let rate = 0.8;
+let voiceLocked = false; // 新增：锁定状态
 
 function loadVoices() {
-  voices = speechSynthesis.getVoices();
-  const sel = document.getElementById('voiceSelect');
+  const all = speechSynthesis.getVoices();
+  if (all.length === 0) return;
+
+  voices = all;
+
   const de = voices.filter(v => v.lang.startsWith('de'));
-  const all = voices;
+  const targetVoices = de.length > 0 ? de : voices;
+
+  const sel = document.getElementById('voiceSelect');
   sel.innerHTML = '';
-  
-  if (de.length > 0) {
-    de.forEach(v => {
-      let opt = document.createElement('option');
-      opt.value = v.name; opt.textContent = v.name + ' (' + v.lang + ')';
-      sel.appendChild(opt);
-    });
-    selectedVoice = de[0];
-  } else {
-    all.forEach(v => {
-      let opt = document.createElement('option');
-      opt.value = v.name; opt.textContent = v.name + ' (' + v.lang + ')';
-      sel.appendChild(opt);
-    });
-    if (all.length) selectedVoice = all[0];
+
+  targetVoices.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.name;
+    opt.textContent = v.name + ' (' + v.lang + ')';
+    sel.appendChild(opt);
+  });
+
+  // ================= 核心修复：优先恢复锁定语音 =================
+  const isLocked = localStorage.getItem('voiceLocked') === 'true';
+  const lockedName = localStorage.getItem('lockedVoiceName');
+
+  if (isLocked && lockedName) {
+    // 在全部语音里查找（更稳妥）
+    const lockedVoice = voices.find(v => v.name === lockedName) || 
+                        targetVoices.find(v => v.name === lockedName);
+    
+    if (lockedVoice) {
+      selectedVoice = lockedVoice;
+      sel.value = lockedVoice.name;
+      sel.disabled = true;
+
+      const btn = document.getElementById('lockBtn');
+      if (btn) {
+        btn.innerHTML = '🔒 已锁定';
+        btn.classList.add('locked');
+      }
+      voiceLocked = true;
+      return;                    // ← 关键：锁定成功后直接退出，不再走默认逻辑
+    }
   }
+
+  // 没有锁定时，才走“记住上次选择”的逻辑
+  const savedName = localStorage.getItem('savedVoiceName');
+  const match = savedName ? targetVoices.find(v => v.name === savedName) : null;
+  if (match) {
+    selectedVoice = match;
+    sel.value = match.name;
+  } else {
+    selectedVoice = targetVoices[0] || null;
+    if (selectedVoice) sel.value = selectedVoice.name;
+  }
+  addVoiceHoverListener();
 }
 
 speechSynthesis.onvoiceschanged = loadVoices;
@@ -1569,18 +1644,92 @@ loadVoices();
 function updateVoice() {
   const sel = document.getElementById('voiceSelect');
   selectedVoice = voices.find(v => v.name === sel.value) || null;
+  
+  // ================= 自动朗读预览（点击切换时） =================
+  speakVoicePreview();
+  
+  // 选择完语音后自动切回发音卡片
+  setTimeout(() => {
+    const firstItem = document.querySelector('.section.active .focusable-item');
+    if (firstItem) firstItem.focus();
+  }, 80);
+}
+
+// ================= 新增：朗读预览函数（可被 hover 和 change 共用） =================
+function speakVoicePreview() {
+  if (!selectedVoice) return;
+  
+  speechSynthesis.cancel();   // 停止之前的朗读，避免重叠
+  
+  const previewText = "Hallo! Dies ist eine Vorschau deiner Stimme."; // 简短的预览文本
+  const utt = new SpeechSynthesisUtterance(previewText);
+  utt.lang = 'de-DE';
+  utt.voice = selectedVoice;
+  utt.rate = rate || 0.9;     // 使用当前语速，稍慢一点更清晰
+  
+  speechSynthesis.speak(utt);
+}
+
+// ================= 在 loadVoices() 结束后添加悬停监听（只需加一次） =================
+function addVoiceHoverListener() {
+  const sel = document.getElementById('voiceSelect');
+  if (!sel) return;
+
+  // 鼠标悬停在 select 上时，如果菜单已展开，则监听选项 hover
+  sel.addEventListener('mousedown', () => {
+    // 给一点延迟，让下拉菜单展开后再绑定
+    setTimeout(() => {
+      // 部分浏览器支持对 option 的 mouseover（Chrome/Edge 较好）
+      const options = sel.options;
+      for (let i = 0; i < options.length; i++) {
+        const opt = options[i];
+        // 移除旧监听避免重复
+        opt.onmouseover = null;
+        opt.onmouseover = function() {
+          // 临时切换 selectedVoice 并朗读
+          const tempVoice = voices.find(v => v.name === this.value);
+          if (tempVoice) {
+            selectedVoice = tempVoice;   // 临时切换
+            speakVoicePreview();
+          }
+        };
+      }
+    }, 100);
+  });
+}
+
+// ================= 新增：语音锁定功能（已优化） =================
+function toggleVoiceLock() {
+  const btn = document.getElementById('lockBtn');
+  const sel = document.getElementById('voiceSelect');
+  
+  voiceLocked = !voiceLocked;
+  
+  if (voiceLocked) {
+    const currentName = selectedVoice ? selectedVoice.name : sel.value;
+    if (currentName) {
+      localStorage.setItem('lockedVoiceName', currentName);
+      localStorage.setItem('voiceLocked', 'true');
+      localStorage.removeItem('savedVoiceName');   // 清除旧记录，避免冲突
+      
+      btn.innerHTML = '🔒 已锁定';
+      btn.classList.add('locked');
+      sel.disabled = true;
+      showToast('✅ 语音已永久锁定！刷新页面也会一直使用此语音');
+    }
+  } else {
+    localStorage.removeItem('lockedVoiceName');
+    localStorage.removeItem('voiceLocked');
+    btn.innerHTML = '🔓 未锁定';
+    btn.classList.remove('locked');
+    sel.disabled = false;
+    showToast('🔓 语音锁定已解除');
+  }
 }
 
 function updateRate(v) {
   rate = parseFloat(v);
   document.getElementById('rateVal').textContent = v + '×';
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
 }
 
 // ================= 录音比对功能 =================
@@ -1627,17 +1776,19 @@ async function toggleRecord(micBtn) {
 
 // 自动给所有发音元素注入麦克风
 function injectMics() {
-  // 精确查找到所有：长短音按钮、缩略词卡片、字母卡片、单词、例句、测试单词
   const targets = document.querySelectorAll('.vl-btn, .abbr-card, .abc-card, .w-item, .s-item, .test-word');
   
   targets.forEach(el => {
+    // 新增：让元素可以通过键盘 Tab 键选中，并加上专属 class
+    el.setAttribute('tabindex', '0');
+    el.classList.add('focusable-item');
+
     el.classList.add('has-mic');
     let mic = document.createElement('span');
     mic.className = 'mic-btn';
     mic.innerHTML = '🎤';
     mic.title = "点击录音对比";
     
-    // 阻止冒泡，防止点击麦克风时触发外层的单词发音
     mic.onclick = (e) => { 
       e.stopPropagation(); 
       toggleRecord(mic); 
@@ -1646,10 +1797,154 @@ function injectMics() {
   });
 }
 
-// 页面加载完成后，先渲染数据，稍微延迟一下注入麦克风
+// ================= 真实 2D 空间导航算法 =================
+function getNextFocusElement(currentEl, direction) {
+  const items = Array.from(document.querySelectorAll('.section.active .focusable-item'));
+  const idx = items.indexOf(currentEl);
+  if (idx === -1) return null;
+
+  // 左右移动直接取上一个/下一个
+  if (direction === 'Next') return items[(idx + 1) % items.length];
+  if (direction === 'Prev') return items[(idx - 1 + items.length) % items.length];
+
+  // 上下移动：根据屏幕上的坐标进行物理寻找
+  const curRect = currentEl.getBoundingClientRect();
+  let bestMatch = null;
+  let minDiff = Infinity;
+
+  for (let i = 0; i < items.length; i++) {
+    if (i === idx) continue;
+    const targetRect = items[i].getBoundingClientRect();
+    
+    // 判断目标在上方还是下方 (加上 8px 误差容错)
+    const isAbove = direction === 'Up' && targetRect.bottom <= curRect.top + 8;
+    const isBelow = direction === 'Down' && targetRect.top >= curRect.bottom - 8;
+
+    if (isAbove || isBelow) {
+      // 计算水平中心的偏移量
+      const curCenter = curRect.left + curRect.width / 2;
+      const tarCenter = targetRect.left + targetRect.width / 2;
+      const hDiff = Math.abs(curCenter - tarCenter);
+      const vDiff = Math.abs(curRect.top - targetRect.top);
+      
+      // 我们更看重水平对齐，所以水平距离的权重设高一点
+      const score = hDiff * 5 + vDiff; 
+
+      if (score < minDiff) {
+        minDiff = score;
+        bestMatch = items[i];
+      }
+    }
+  }
+  // 如果到了最顶或者最底找不到，就留在原地不动
+  return bestMatch || currentEl;
+}
+
+// ================= 全局键盘快捷键 =================
+document.addEventListener('keydown', function(e) {
+  if (e.metaKey || e.ctrlKey || e.key === 'Home' || e.key === 'End') {
+    // 这些键通常用于页面滚动、回到顶部/底部、标签切换等浏览器默认行为
+    // 我们不 preventDefault，让浏览器自己处理
+    if (['ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown'].includes(e.key)) {
+      return;   // 直接返回，不阻止默认行为
+    }
+  }
+  // 1. 如果在下拉菜单里，按 Esc 退出
+  if (document.activeElement.tagName === 'SELECT') {
+    if (e.key === 'Escape' || e.key === 'Enter') {
+      document.activeElement.blur();
+      const firstItem = document.querySelector('.section.active .focusable-item');
+      if (firstItem) firstItem.focus();
+    }
+    return;
+  }
+
+  // 2. 标签页切换 1-6
+  const tabsMap = ['vowellength', 'abc', 'abbr', 'vowels', 'consonants', 'test'];
+  if (e.key >= '1' && e.key <= '6') {
+    e.preventDefault();
+    switchTab(tabsMap[parseInt(e.key) - 1]);
+    return;
+  }
+
+  // 3. V键 → 真正弹出语音选择菜单（2026最新可靠写法）
+  if (e.key.toLowerCase() === 'v') {
+    e.preventDefault();
+    const sel = document.getElementById('voiceSelect');
+    if (sel) {
+      sel.focus();                     // 先聚焦
+
+      // 核心：使用现代标准 API 强制弹出下拉菜单
+      setTimeout(() => {
+        if (typeof sel.showPicker === 'function') {
+          sel.showPicker();            // Chrome/Edge/Firefox/Safari 都支持
+        } else {
+          // 极少数老浏览器备用方案
+          sel.click();
+        }
+      }, 10);
+
+      showToast('🎙 语音引擎菜单已弹出 ↑ 用 ↑↓ 键选择，回车确认');
+    }
+    return;
+  }
+
+    // 4. L键 切换语音锁定状态
+  if (e.key.toLowerCase() === 'l') {
+    e.preventDefault();
+    toggleVoiceLock();
+    return;
+  }
+
+  // 4. 加减号控制语速
+  if (e.key === '+' || e.key === '=') {
+    let s = document.getElementById('rateSlider');
+    let nv = Math.min(1.5, parseFloat(rate) + 0.1);
+    s.value = nv; updateRate(nv.toFixed(1)); return;
+  }
+  if (e.key === '-' || e.key === '_') {
+    let s = document.getElementById('rateSlider');
+    let nv = Math.max(0.5, parseFloat(rate) - 0.1);
+    s.value = nv; updateRate(nv.toFixed(1)); return;
+  }
+
+  // 5. WASD 和 方向键操控逻辑
+  const activeEl = document.activeElement;
+  if (!activeEl || !activeEl.classList.contains('focusable-item')) return;
+
+  if (e.key === ' ' || e.code === 'Space') {
+    e.preventDefault(); 
+    activeEl.click();
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const mic = activeEl.querySelector('.mic-btn');
+    if (mic) mic.click();
+  } else {
+    // 映射按键到真实方向
+    let dir = null;
+    if (['ArrowRight', 'd', 'D'].includes(e.key)) dir = 'Next';
+    if (['ArrowLeft', 'a', 'A'].includes(e.key)) dir = 'Prev';
+    if (['ArrowUp', 'w', 'W'].includes(e.key)) dir = 'Up';
+    if (['ArrowDown', 's', 'S'].includes(e.key)) dir = 'Down';
+    
+    if (dir) {
+      e.preventDefault();
+      const nextEl = getNextFocusElement(activeEl, dir);
+      if (nextEl) nextEl.focus();
+    }
+  }
+});
+
+// ================= 初始化入口 =================
+// 页面加载完成后，注入麦克风并聚焦第一项
 window.onload = () => {
   renderData();
-  setTimeout(injectMics, 100); 
+  setTimeout(() => {
+    injectMics(); 
+    // 初始加载自动聚焦当前页面的第一个元素
+    const firstItem = document.querySelector('.section.active .focusable-item');
+    if (firstItem) firstItem.focus();
+  }, 100); 
 };
 </script>
 </body>
