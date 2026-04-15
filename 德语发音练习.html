@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>达赫德语语⾳教程 第八版</title>
+<style>
+  :root {
+    --blue: #1E3A5F;
+    --cyan: #0099CC;
+    --light: #E8F4FD;
+    --white: #fff;
+    --gray: #f4f6f9;
+    --border: #dde3ea;
+    --text: #2c3e50;
+    --muted: #7f8c8d;
+    --main-letter: #2980b9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', "Microsoft YaHei", sans-serif; background: var(--gray); color: var(--text); }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, var(--blue) 0%, #2d5f8a 100%);
+    color: white; padding: 20px 24px;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    position: sticky; top: 0; z-index: 100;
+  }
+  header .logo { font-size: 32px; }
+  header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+  header p { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+
+  /* Controls */
+  .controls {
+    background: white; padding: 12px 24px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  }
+  .ctrl-group { display: flex; align-items: center; gap: 8px; }
+  .ctrl-group label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .ctrl-group select, .ctrl-group input { font-size: 13px; outline: none; }
+
+  /* Tabs */
+  .tabs {
+    display: flex; background: white; padding: 0 10px;
+    border-bottom: 2px solid var(--border); overflow-x: auto;
+  }
+  .tab {
+    padding: 14px 20px; color: var(--muted); cursor: pointer;
+    font-size: 15px; font-weight: 600; border-bottom: 3px solid transparent;
+    transition: all 0.2s; white-space: nowrap; margin-bottom: -2px;
+  }
+  .tab:hover { color: var(--cyan); }
+  .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+  /* Content Area */
+  .content { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .section { display: none; animation: fadeIn 0.3s; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ================= Vowel Length & Abbreviations ================= */
+  .vl-table { width: 100%; max-width: 500px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-collapse: collapse; margin-bottom: 20px; }
+  .vl-table th { background: var(--cyan); color: white; padding: 12px; }
+  .vl-table td { padding: 12px; text-align: center; border-bottom: 1px solid var(--border); }
+  .vl-btn { background: var(--light); border: 1px solid var(--cyan); color: var(--cyan); padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: Consolas, monospace; font-size: 15px; transition: 0.2s; }
+  .vl-btn:hover { background: var(--cyan); color: white; transform: scale(1.05); }
+
+  .abbr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
+  .abbr-card { background: white; border: 1px solid var(--border); padding: 14px 0; text-align: center; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+  .abbr-card:hover { border-color: var(--cyan); background: var(--light); color: var(--cyan); transform: translateY(-3px); }
+
+  /* ================= Alphabet Section ================= */
+  .abc-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px;
+  }
+  .abc-card {
+    background: white; border-radius: 8px; padding: 16px 0; text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid var(--border);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .abc-card:hover { transform: translateY(-3px); border-color: var(--cyan); box-shadow: 0 4px 10px rgba(0,153,204,0.15); }
+  .abc-card .let { font-size: 24px; font-weight: bold; color: var(--text); }
+  .abc-card .ipa { font-size: 13px; color: var(--cyan); margin-top: 4px; font-family: Consolas, monospace; }
+
+  /* ================= Pronunciation Blocks (Vowels & Consonants) ================= */
+  .ph-block {
+    background: white; border-radius: 12px; margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; overflow: hidden;
+  }
+  .ph-main {
+    background: #f8fafc; padding: 20px; border-right: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; min-width: 80px;
+    font-size: 40px; font-weight: bold; color: var(--main-letter);
+  }
+  .ph-rules { flex: 1; padding: 10px 0; }
+  .rule-row {
+    display: flex; border-bottom: 1px solid #f0f0f0; padding: 12px 20px;
+    align-items: stretch;
+  }
+  .rule-row:last-child { border-bottom: none; }
+  
+  .rule-tag {
+    background: var(--cyan); color: white; border-radius: 4px; padding: 4px 10px;
+    font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center;
+    min-width: 80px; text-align: center; margin-right: 20px; letter-spacing: 0.5px;
+  }
+  .rule-tag.dark { background: var(--blue); }
+
+  .word-list {
+    display: flex; flex-wrap: wrap; gap: 16px; flex: 1; align-items: center;
+  }
+  .w-item {
+    text-align: center; cursor: pointer; padding: 6px 12px; border-radius: 6px;
+    transition: background 0.2s; min-width: 60px;
+  }
+  .w-item:hover { background: var(--light); color: var(--cyan); }
+  .w-item .w { font-size: 16px; font-weight: 600; }
+  .w-item .m { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ================= Contrast & Sentences ================= */
+  .sentence-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;
+  }
+  .s-card {
+    background: white; padding: 16px; border-radius: 10px; border: 1px solid var(--border);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03); cursor: pointer; transition: all 0.2s;
+  }
+  .s-card:hover { border-color: var(--cyan); background: var(--light); }
+  .s-card .de { font-size: 16px; font-weight: bold; margin-bottom: 6px; }
+  .s-card .en { font-size: 13px; color: var(--muted); }
+
+  /* ================= Test Section ================= */
+  .test-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .test-row {
+    background: white; padding: 16px 20px; border-radius: 8px; border: 1px solid var(--border);
+    display: flex; gap: 16px; align-items: center; font-size: 16px; cursor: pointer;
+  }
+  .test-row:hover { border-color: var(--cyan); background: var(--light); color: var(--cyan); }
+  .test-row .num { font-weight: bold; color: var(--cyan); width: 24px; }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: rgba(30, 58, 95, 0.9); color: white; padding: 12px 24px;
+    border-radius: 30px; font-size: 15px; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .toast.show { opacity: 1; }
+
+  @media(max-width: 768px) {
+    .ph-block { flex-direction: column; }
+    .ph-main { border-right: none; border-bottom: 1px solid var(--border); padding: 10px; font-size: 28px; }
+    .rule-row { flex-direction: column; gap: 12px; }
+    .rule-tag { width: fit-content; }
+    .word-list { gap: 10px; }
+    .controls { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+
+  /* ================= 新增：句子与测试单词样式 ================= */
+  .ph-sentences {
+    background: #fffdf5; padding: 12px 20px; border-top: 1px dashed #ffd54f;
+    display: flex; flex-direction: column; gap: 8px; width: 100%;
+  }
+  .s-item {
+    cursor: pointer; padding: 6px 12px; border-radius: 6px; transition: 0.2s;
+    font-size: 15px; display: inline-block; width: fit-content;
+  }
+  .s-item:hover { background: #ffe082; color: #d35400; }
+  .s-item .en { font-size: 13px; color: #7f8c8d; margin-left: 10px; font-weight: normal; }
+  
+  .test-word {
+    display: inline-block; cursor: pointer; padding: 4px 8px; border-radius: 4px;
+    background: #f4f6f9; transition: 0.2s; color: var(--text);
+  }
+  .test-word:hover { background: var(--cyan); color: white; }
+
+  /* ================= 新增：麦克风录音样式 ================= */
+  .has-mic { position: relative; padding-right: 18px !important; }
+  /* 保证大卡片里的文字依然居中，不受麦克风挤压 */
+  .abc-card.has-mic, .abbr-card.has-mic { padding-right: 0 !important; }
+  .mic-btn {
+    position: absolute; top: 2px; right: 2px; font-size: 11px; cursor: pointer; 
+    opacity: 0.3; transition: 0.2s; z-index: 10; user-select: none;
+  }
+  .mic-btn:hover { opacity: 1; transform: scale(1.2); }
+  .mic-btn.recording { color: red; opacity: 1; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.2; } }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🇩🇪</div>
+  <div>
+    <h1>达赫德语语音教程 - 第八版</h1>
+    <p>点击页面内任意字母、单词或句子即可标准发音</p>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <label>🔊 语音引擎</label>
+    <select id="voiceSelect" onchange="updateVoice()"><option value="">加载中...</option></select>
+  </div>
+  <div class="ctrl-group">
+    <label>🗣 语速</label>
+    <input type="range" min="0.5" max="1.5" step="0.1" value="0.8" oninput="updateRate(this.value)">
+    <span id="rateVal" style="color:var(--cyan);font-weight:bold;font-size:13px;width:30px;">0.8×</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('vowellength')">主要长短音</div>
+  <div class="tab" onclick="switchTab('abc')">字母表</div>
+  <div class="tab" onclick="switchTab('abbr')">缩略词</div>
+  <div class="tab" onclick="switchTab('vowels')">元音组合</div>
+  <div class="tab" onclick="switchTab('consonants')">辅音组合</div>
+  <div class="tab" onclick="switchTab('test')">语音测试</div>
+</div>
+
+<div class="content">
+  <!-- ================= 主要长短音 ================= -->
+  <div class="section active" id="sec-vowellength">
+    <div style="display:flex; justify-content:center; padding: 20px 0;">
+      <table class="vl-table">
+        <thead><tr><th>字母</th><th>长音</th><th>短音</th></tr></thead>
+        <tbody id="vlTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================= 缩略词 ================= -->
+  <div class="section" id="sec-abbr">
+    <div class="abbr-grid" id="abbrGrid"></div>
+  </div>
+
+  <!-- ================= 字母表 ================= -->
+  <div class="section" id="sec-abc">
+    <div class="abc-grid" id="abcGrid"></div>
+  </div>
+
+  <!-- ================= 元音 ================= -->
+  <div class="section" id="sec-vowels">
+    
+    <!-- a -->
+    <div class="ph-block">
+      <div class="ph-main">a</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">aa [a:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Aale')"><div class="w">Aale</div><div class="m">eels</div></div>
+            <div class="w-item" onclick="speak('Haar')"><div class="w">Haar</div><div class="m">hair</div></div>
+            <div class="w-item" onclick="speak('Paar')"><div class="w">Paar</div><div class="m">pair</div></div>
+            <div class="w-item" onclick="speak('Saat')"><div class="w">Saat</div><div class="m">seed</div></div>
+            <div class="w-item" onclick="speak('Maar')"><div class="w">Maar</div><div class="m">maar</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ah [a:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Jahr')"><div class="w">Jahr</div><div class="m">year</div></div>
+            <div class="w-item" onclick="speak('nahe')"><div class="w">nahe</div><div class="m">near</div></div>
+            <div class="w-item" onclick="speak('lahm')"><div class="w">lahm</div><div class="m">lame</div></div>
+            <div class="w-item" onclick="speak('Mahl')"><div class="w">Mahl</div><div class="m">meal</div></div>
+            <div class="w-item" onclick="speak('zahm')"><div class="w">zahm</div><div class="m">tame</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">a [a:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('haben')"><div class="w">haben</div><div class="m">have</div></div>
+            <div class="w-item" onclick="speak('gab')"><div class="w">gab</div><div class="m">gave</div></div>
+            <div class="w-item" onclick="speak('Bad')"><div class="w">Bad</div><div class="m">bath</div></div>
+            <div class="w-item" onclick="speak('Tag')"><div class="w">Tag</div><div class="m">day</div></div>
+            <div class="w-item" onclick="speak('Banane')"><div class="w">Banane</div><div class="m">banana</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">a [a]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Kamm')"><div class="w">Kamm</div><div class="m">comb</div></div>
+            <div class="w-item" onclick="speak('Gans')"><div class="w">Gans</div><div class="m">goose</div></div>
+            <div class="w-item" onclick="speak('Hand')"><div class="w">Hand</div><div class="m">hand</div></div>
+            <div class="w-item" onclick="speak('Mann')"><div class="w">Mann</div><div class="m">man</div></div>
+            <div class="w-item" onclick="speak('kalt')"><div class="w">kalt</div><div class="m">cold</div></div>
+          </div>
+        </div>
+      <!-- a 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('Danke, Tante Anna!')">Danke, Tante Anna! <span class="en">Thank you, aunty Anna!</span></div>
+        <div class="s-item" onclick="speak('Was ist das?')">Was ist das? <span class="en">What is that?</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- o -->
+    <div class="ph-block">
+      <div class="ph-main">o</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">oo [o:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Boot')"><div class="w">Boot</div><div class="m">boat</div></div>
+            <div class="w-item" onclick="speak('Moor')"><div class="w">Moor</div><div class="m">moor</div></div>
+            <div class="w-item" onclick="speak('Moos')"><div class="w">Moos</div><div class="m">moss</div></div>
+            <div class="w-item" onclick="speak('Zoo')"><div class="w">Zoo</div><div class="m">zoo</div></div>
+            <div class="w-item" onclick="speak('doof')"><div class="w">doof</div><div class="m">dumb</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">oh [o:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Bohne')"><div class="w">Bohne</div><div class="m">bean</div></div>
+            <div class="w-item" onclick="speak('Floh')"><div class="w">Floh</div><div class="m">flea</div></div>
+            <div class="w-item" onclick="speak('Fohlen')"><div class="w">Fohlen</div><div class="m">foal</div></div>
+            <div class="w-item" onclick="speak('Kohle')"><div class="w">Kohle</div><div class="m">coal</div></div>
+            <div class="w-item" onclick="speak('Sohn')"><div class="w">Sohn</div><div class="m">son</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">o [o:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Alkohol')"><div class="w">Alkohol</div><div class="m">alcohol</div></div>
+            <div class="w-item" onclick="speak('Oper')"><div class="w">Oper</div><div class="m">opera</div></div>
+            <div class="w-item" onclick="speak('tot')"><div class="w">tot</div><div class="m">dead</div></div>
+            <div class="w-item" onclick="speak('Foto')"><div class="w">Foto</div><div class="m">photo</div></div>
+            <div class="w-item" onclick="speak('Gotik')"><div class="w">Gotik</div><div class="m">Gothic</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">o [ɔ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('kosten')"><div class="w">kosten</div><div class="m">cost</div></div>
+            <div class="w-item" onclick="speak('Gott')"><div class="w">Gott</div><div class="m">God</div></div>
+            <div class="w-item" onclick="speak('oft')"><div class="w">oft</div><div class="m">often</div></div>
+            <div class="w-item" onclick="speak('offen')"><div class="w">offen</div><div class="m">open</div></div>
+            <div class="w-item" onclick="speak('Osten')"><div class="w">Osten</div><div class="m">east</div></div>
+          </div>
+        </div>
+        <!-- o 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('Ton - Tonne')">Ton - Tonne <span class="en">tune - tonne</span></div>
+        <div class="s-item" onclick="speak('Ofen - offen')">Ofen - offen <span class="en">oven - open</span></div>
+        <div class="s-item" onclick="speak('Was ist los?')">Was ist los? <span class="en">What happed? (what is loose)</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- e -->
+    <div class="ph-block">
+      <div class="ph-main">e</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">ee [e:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('See')"><div class="w">See</div><div class="m">sea</div></div>
+            <div class="w-item" onclick="speak('Seele')"><div class="w">Seele</div><div class="m">soul</div></div>
+            <div class="w-item" onclick="speak('Armee')"><div class="w">Armee</div><div class="m">army</div></div>
+            <div class="w-item" onclick="speak('Idee')"><div class="w">Idee</div><div class="m">idea</div></div>
+            <div class="w-item" onclick="speak('Komitee')"><div class="w">Komitee</div><div class="m">committee</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">eh [e:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('zehn')"><div class="w">zehn</div><div class="m">ten</div></div>
+            <div class="w-item" onclick="speak('lehnen')"><div class="w">lehnen</div><div class="m">lean</div></div>
+            <div class="w-item" onclick="speak('gehen')"><div class="w">gehen</div><div class="m">go</div></div>
+            <div class="w-item" onclick="speak('sehen')"><div class="w">sehen</div><div class="m">see</div></div>
+            <div class="w-item" onclick="speak('sehr')"><div class="w">sehr</div><div class="m">sore (very)</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">e [e:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Leber')"><div class="w">Leber</div><div class="m">liver</div></div>
+            <div class="w-item" onclick="speak('leben')"><div class="w">leben</div><div class="m">live</div></div>
+            <div class="w-item" onclick="speak('geben')"><div class="w">geben</div><div class="m">give</div></div>
+            <div class="w-item" onclick="speak('Kollege')"><div class="w">Kollege</div><div class="m">colleague</div></div>
+            <div class="w-item" onclick="speak('Meter')"><div class="w">Meter</div><div class="m">meter</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">e [ɛ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Pfeffer')"><div class="w">Pfeffer</div><div class="m">pepper</div></div>
+            <div class="w-item" onclick="speak('denken')"><div class="w">denken</div><div class="m">think</div></div>
+            <div class="w-item" onclick="speak('selbst')"><div class="w">selbst</div><div class="m">self</div></div>
+            <div class="w-item" onclick="speak('elf')"><div class="w">elf</div><div class="m">eleven</div></div>
+            <div class="w-item" onclick="speak('entfliehen')"><div class="w">entfliehen</div><div class="m">flee</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark" style="background:#2c3e50">e [ə] 弱读</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Name')"><div class="w">Name</div><div class="m">name</div></div>
+            <div class="w-item" onclick="speak('Socke')"><div class="w">Socke</div><div class="m">sock</div></div>
+            <div class="w-item" onclick="speak('bedanken')"><div class="w">bedanken</div><div class="m">thank</div></div>
+            <div class="w-item" onclick="speak('Geburt')"><div class="w">Geburt</div><div class="m">birth</div></div>
+            <div class="w-item" onclick="speak('gewinnen')"><div class="w">gewinnen</div><div class="m">win</div></div>
+          </div>
+        </div>
+        <!-- e 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('Erde')">erd/t: Erde <span class="en">earth</span></div>
+        <div class="s-item" onclick="speak('Beet - Bett')">Beet - Bett <span class="en">bed - bed</span></div>
+        <div class="s-item" onclick="speak('Kaffee oder Tee?')">Kaffee oder Tee? <span class="en">Coffee or tea?</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- i -->
+    <div class="ph-block">
+      <div class="ph-main">i</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">ie [i:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('tief')"><div class="w">tief</div><div class="m">deep</div></div>
+            <div class="w-item" onclick="speak('hier')"><div class="w">hier</div><div class="m">here</div></div>
+            <div class="w-item" onclick="speak('die')"><div class="w">die</div><div class="m">the</div></div>
+            <div class="w-item" onclick="speak('lieben')"><div class="w">lieben</div><div class="m">love</div></div>
+            <div class="w-item" onclick="speak('Diesel')"><div class="w">Diesel</div><div class="m">diesel</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ih [i:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('ihn')"><div class="w">ihn</div><div class="m">him</div></div>
+            <div class="w-item" onclick="speak('ihm')"><div class="w">ihm</div><div class="m">(to) him</div></div>
+            <div class="w-item" onclick="speak('ihr')"><div class="w">ihr</div><div class="m">(to) her</div></div>
+            <div class="w-item" onclick="speak('ihnen')"><div class="w">ihnen</div><div class="m">(to) them</div></div>
+            <div class="w-item" onclick="speak('ihrer')"><div class="w">ihrer</div><div class="m">(of) her</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">i [i:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Tiger')"><div class="w">Tiger</div><div class="m">tiger</div></div>
+            <div class="w-item" onclick="speak('Figur')"><div class="w">Figur</div><div class="m">figure</div></div>
+            <div class="w-item" onclick="speak('Mine')"><div class="w">Mine</div><div class="m">mine</div></div>
+            <div class="w-item" onclick="speak('Maschine')"><div class="w">Maschine</div><div class="m">machine</div></div>
+            <div class="w-item" onclick="speak('Medizin')"><div class="w">Medizin</div><div class="m">medicine</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">i [ɪ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('dick')"><div class="w">dick</div><div class="m">thick</div></div>
+            <div class="w-item" onclick="speak('Liste')"><div class="w">Liste</div><div class="m">list</div></div>
+            <div class="w-item" onclick="speak('Fisch')"><div class="w">Fisch</div><div class="m">fish</div></div>
+            <div class="w-item" onclick="speak('Lippe')"><div class="w">Lippe</div><div class="m">lip</div></div>
+            <div class="w-item" onclick="speak('Unsinn')"><div class="w">Unsinn</div><div class="m">nonsense</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag" style="background:#e67e22;width:auto;">注:非重读ie [iə]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Familie')"><div class="w">Familie</div><div class="m">family</div></div>
+            <div class="w-item" onclick="speak('Asien')"><div class="w">Asien</div><div class="m">Asia</div></div>
+            <div class="w-item" onclick="speak('Italien')"><div class="w">Italien</div><div class="m">Italy</div></div>
+          </div>
+        </div>
+        <!-- i 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('in - ihn')">in - ihn <span class="en">in - him</span></div>
+        <div class="s-item" onclick="speak('Miete - Mitte')">Miete - Mitte <span class="en">meed (rent) - middle</span></div>
+        <div class="s-item" onclick="speak('Wie geht es Ihnen?')">Wie geht es Ihnen? <span class="en">How are you?</span></div>
+        <div class="s-item" onclick="speak('bieten - bitten - beten - Betten')">bieten - bitten - beten - Betten <span class="en">bid - bid (beg) - (pray) - beds</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- u -->
+    <div class="ph-block">
+      <div class="ph-main">u</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">uh [u:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Kuh')"><div class="w">Kuh</div><div class="m">cow</div></div>
+            <div class="w-item" onclick="speak('Uhr')"><div class="w">Uhr</div><div class="m">hour</div></div>
+            <div class="w-item" onclick="speak('Schuh')"><div class="w">Schuh</div><div class="m">shoe</div></div>
+            <div class="w-item" onclick="speak('Huhn')"><div class="w">Huhn</div><div class="m">hen</div></div>
+            <div class="w-item" onclick="speak('Pfuhl')"><div class="w">Pfuhl</div><div class="m">pool</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">u [u:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('gut')"><div class="w">gut</div><div class="m">good</div></div>
+            <div class="w-item" onclick="speak('zu')"><div class="w">zu</div><div class="m">to, too</div></div>
+            <div class="w-item" onclick="speak('du')"><div class="w">du</div><div class="m">thou</div></div>
+            <div class="w-item" onclick="speak('Blut')"><div class="w">Blut</div><div class="m">blood</div></div>
+            <div class="w-item" onclick="speak('Institut')"><div class="w">Institut</div><div class="m">institute</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">u [ʊ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('und')"><div class="w">und</div><div class="m">and</div></div>
+            <div class="w-item" onclick="speak('Hund')"><div class="w">Hund</div><div class="m">hound</div></div>
+            <div class="w-item" onclick="speak('dumm')"><div class="w">dumm</div><div class="m">dumb</div></div>
+            <div class="w-item" onclick="speak('Kupfer')"><div class="w">Kupfer</div><div class="m">copper</div></div>
+            <div class="w-item" onclick="speak('Gummi')"><div class="w">Gummi</div><div class="m">gum</div></div>
+          </div>
+        </div>
+        <!-- u 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('Guten Morgen!')">Guten Morgen! <span class="en">Good morning!</span></div>
+        <div class="s-item" onclick="speak('Guten Flug!')">Guten Flug! <span class="en">(Have a) good flight!</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- ei/ai -->
+    <div class="ph-block">
+      <div class="ph-main" style="font-size:28px">ei/ai</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">ei [aɪ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('mein')"><div class="w">mein</div><div class="m">my</div></div>
+            <div class="w-item" onclick="speak('Eisen')"><div class="w">Eisen</div><div class="m">iron</div></div>
+            <div class="w-item" onclick="speak('ein')"><div class="w">ein</div><div class="m">an, one</div></div>
+            <div class="w-item" onclick="speak('nein')"><div class="w">nein</div><div class="m">no</div></div>
+            <div class="w-item" onclick="speak('Fleisch')"><div class="w">Fleisch</div><div class="m">flesh</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ai [aɪ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Mai')"><div class="w">Mai</div><div class="m">May</div></div>
+            <div class="w-item" onclick="speak('Mais')"><div class="w">Mais</div><div class="m">maize</div></div>
+            <div class="w-item" onclick="speak('Kai')"><div class="w">Kai</div><div class="m">quay</div></div>
+            <div class="w-item" onclick="speak('Kaiser')"><div class="w">Kaiser</div><div class="m">Caesar</div></div>
+            <div class="w-item" onclick="speak('Taifun')"><div class="w">Taifun</div><div class="m">typhoon</div></div>
+          </div>
+        </div>
+        <!-- ei/ai 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('ein Eis')">ein Eis <span class="en">an icecream</span></div>
+        <div class="s-item" onclick="speak('Mein Name ist Meier.')">Mein Name ist Meier. <span class="en">My name is Meier.</span></div>
+        <div class="s-item" onclick="speak('Du bist mein, ich bin dein.')">Du bist mein, ich bin dein. <span class="en">Thou art mine, I am thine!</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Ä -->
+    <div class="ph-block">
+      <div class="ph-main">Ä</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">äh [ɛ:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('gähnen')"><div class="w">gähnen</div><div class="m">yawn</div></div>
+            <div class="w-item" onclick="speak('mähen')"><div class="w">mähen</div><div class="m">mow</div></div>
+            <div class="w-item" onclick="speak('Mähne')"><div class="w">Mähne</div><div class="m">mane</div></div>
+            <div class="w-item" onclick="speak('erzählen')"><div class="w">erzählen</div><div class="m">tell</div></div>
+            <div class="w-item" onclick="speak('zähmen')"><div class="w">zähmen</div><div class="m">tame</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ä [ɛ:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Bär')"><div class="w">Bär</div><div class="m">bear</div></div>
+            <div class="w-item" onclick="speak('wägen')"><div class="w">wägen</div><div class="m">weigh</div></div>
+            <div class="w-item" onclick="speak('Dämon')"><div class="w">Dämon</div><div class="m">daemon</div></div>
+            <div class="w-item" onclick="speak('Diät')"><div class="w">Diät</div><div class="m">diet</div></div>
+            <div class="w-item" onclick="speak('Domäne')"><div class="w">Domäne</div><div class="m">domain</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">ä [ɛ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Kälte')"><div class="w">Kälte</div><div class="m">coldness</div></div>
+            <div class="w-item" onclick="speak('Männer')"><div class="w">Männer</div><div class="m">men</div></div>
+            <div class="w-item" onclick="speak('Hände')"><div class="w">Hände</div><div class="m">hands</div></div>
+            <div class="w-item" onclick="speak('Sänger')"><div class="w">Sänger</div><div class="m">singer</div></div>
+            <div class="w-item" onclick="speak('älter')"><div class="w">älter</div><div class="m">elder, older</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ö -->
+    <div class="ph-block">
+      <div class="ph-main">Ö</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">oe [ø:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Goethe')"><div class="w">Goethe</div><div class="m">Goethe</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">öh [ø:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Höhe')"><div class="w">Höhe</div><div class="m">height</div></div>
+            <div class="w-item" onclick="speak('gewöhnen')"><div class="w">gewöhnen</div><div class="m">wean</div></div>
+            <div class="w-item" onclick="speak('Föhn')"><div class="w">Föhn</div><div class="m">foehn</div></div>
+            <div class="w-item" onclick="speak('Söhne')"><div class="w">Söhne</div><div class="m">sons</div></div>
+            <div class="w-item" onclick="speak('Flöhe')"><div class="w">Flöhe</div><div class="m">fleas</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ö [ø:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Öl')"><div class="w">Öl</div><div class="m">oil</div></div>
+            <div class="w-item" onclick="speak('Komödie')"><div class="w">Komödie</div><div class="m">comedy</div></div>
+            <div class="w-item" onclick="speak('Flöte')"><div class="w">Flöte</div><div class="m">flute</div></div>
+            <div class="w-item" onclick="speak('Löwe')"><div class="w">Löwe</div><div class="m">lion</div></div>
+            <div class="w-item" onclick="speak('nervös')"><div class="w">nervös</div><div class="m">nervous</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">ö [œ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('öffnen')"><div class="w">öffnen</div><div class="m">open</div></div>
+            <div class="w-item" onclick="speak('können')"><div class="w">können</div><div class="m">kann</div></div>
+            <div class="w-item" onclick="speak('zwölf')"><div class="w">zwölf</div><div class="m">twelve</div></div>
+            <div class="w-item" onclick="speak('Köln')"><div class="w">Köln</div><div class="m">Cologne</div></div>
+            <div class="w-item" onclick="speak('Hölle')"><div class="w">Hölle</div><div class="m">hell</div></div>
+          </div>
+        </div>
+        <!-- Ö 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('Können Sie die Tür öffnen?')">Können Sie die Tür öffnen? <span class="en">Can you open the door?</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Ü -->
+    <div class="ph-block">
+      <div class="ph-main">Ü</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">üh [y:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('fühlen')"><div class="w">fühlen</div><div class="m">feel</div></div>
+            <div class="w-item" onclick="speak('kühl')"><div class="w">kühl</div><div class="m">cool</div></div>
+            <div class="w-item" onclick="speak('kühlen')"><div class="w">kühlen</div><div class="m">cool</div></div>
+            <div class="w-item" onclick="speak('Mühle')"><div class="w">Mühle</div><div class="m">mill</div></div>
+            <div class="w-item" onclick="speak('glühen')"><div class="w">glühen</div><div class="m">glow</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ü [y:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('für')"><div class="w">für</div><div class="m">for</div></div>
+            <div class="w-item" onclick="speak('Tür')"><div class="w">Tür</div><div class="m">door</div></div>
+            <div class="w-item" onclick="speak('übel')"><div class="w">übel</div><div class="m">evil</div></div>
+            <div class="w-item" onclick="speak('süß')"><div class="w">süß</div><div class="m">sweet</div></div>
+            <div class="w-item" onclick="speak('Schüler')"><div class="w">Schüler</div><div class="m">schoolboy</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">ü [ʏ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('füllen')"><div class="w">füllen</div><div class="m">fill</div></div>
+            <div class="w-item" onclick="speak('fünf')"><div class="w">fünf</div><div class="m">five</div></div>
+            <div class="w-item" onclick="speak('dünn')"><div class="w">dünn</div><div class="m">thin</div></div>
+            <div class="w-item" onclick="speak('Glück')"><div class="w">Glück</div><div class="m">luck</div></div>
+            <div class="w-item" onclick="speak('Küste')"><div class="w">Küste</div><div class="m">coast</div></div>
+          </div>
+        </div>
+        <!-- Ü 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('Wie süß!')">Wie süß! <span class="en">How sweet / cute!</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- y -->
+    <div class="ph-block">
+      <div class="ph-main">y</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">y [y:]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Typ')"><div class="w">Typ</div><div class="m">type</div></div>
+            <div class="w-item" onclick="speak('Analyse')"><div class="w">Analyse</div><div class="m">analysis</div></div>
+            <div class="w-item" onclick="speak('zynisch')"><div class="w">zynisch</div><div class="m">cynical</div></div>
+            <div class="w-item" onclick="speak('Physik')"><div class="w">Physik</div><div class="m">physics</div></div>
+            <div class="w-item" onclick="speak('Mythos')"><div class="w">Mythos</div><div class="m">myth</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">y [ʏ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Symbol')"><div class="w">Symbol</div><div class="m">symbol</div></div>
+            <div class="w-item" onclick="speak('System')"><div class="w">System</div><div class="m">system</div></div>
+            <div class="w-item" onclick="speak('Zyklus')"><div class="w">Zyklus</div><div class="m">cycle</div></div>
+            <div class="w-item" onclick="speak('Gymnasium')"><div class="w">Gymnasium</div><div class="m">gymnasium</div></div>
+            <div class="w-item" onclick="speak('Enzyklopädie')"><div class="w">Enzyklopädie</div><div class="m">encyclopaedia</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- au / eu / äu -->
+    <div class="ph-block">
+      <div class="ph-main" style="font-size:24px;text-align:center">au<br>eu<br>äu</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">au [aʊ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('aus')"><div class="w">aus</div><div class="m">out</div></div>
+            <div class="w-item" onclick="speak('auf')"><div class="w">auf</div><div class="m">up</div></div>
+            <div class="w-item" onclick="speak('blau')"><div class="w">blau</div><div class="m">blue</div></div>
+            <div class="w-item" onclick="speak('glauben')"><div class="w">glauben</div><div class="m">believe</div></div>
+            <div class="w-item" onclick="speak('Faust')"><div class="w">Faust</div><div class="m">fist</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">eu [ɔʏ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Eule')"><div class="w">Eule</div><div class="m">owl</div></div>
+            <div class="w-item" onclick="speak('Kreuz')"><div class="w">Kreuz</div><div class="m">cross</div></div>
+            <div class="w-item" onclick="speak('euer')"><div class="w">euer</div><div class="m">your</div></div>
+            <div class="w-item" onclick="speak('neun')"><div class="w">neun</div><div class="m">nine</div></div>
+            <div class="w-item" onclick="speak('Freundin')"><div class="w">Freundin</div><div class="m">(girl) friend</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">äu [ɔʏ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Häuser')"><div class="w">Häuser</div><div class="m">houses</div></div>
+            <div class="w-item" onclick="speak('Mäuse')"><div class="w">Mäuse</div><div class="m">mice</div></div>
+            <div class="w-item" onclick="speak('Räume')"><div class="w">Räume</div><div class="m">rooms</div></div>
+            <div class="w-item" onclick="speak('Bräutigam')"><div class="w">Bräutigam</div><div class="m">bridegroom</div></div>
+            <div class="w-item" onclick="speak('Säure')"><div class="w">Säure</div><div class="m">sourness</div></div>
+          </div>
+        </div>
+        <!-- au 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('Audi: Das Auto!')">Audi: Das Auto! <span class="en">Audi: The automobile!</span></div>
+      </div>
+      </div>
+    </div>
+
+  </div> <!-- End Vowels -->
+
+  <!-- ================= 辅音 ================= -->
+  <div class="section" id="sec-consonants">
+
+    <!-- ch -->
+    <div class="ph-block">
+      <div class="ph-main">ch</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">ch [x]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('acht')"><div class="w">acht</div><div class="m">eight</div></div>
+            <div class="w-item" onclick="speak('Tochter')"><div class="w">Tochter</div><div class="m">daughter</div></div>
+            <div class="w-item" onclick="speak('Buch')"><div class="w">Buch</div><div class="m">book</div></div>
+            <div class="w-item" onclick="speak('tauchen')"><div class="w">tauchen</div><div class="m">duck</div></div>
+            <div class="w-item" onclick="speak('Nachbar')"><div class="w">Nachbar</div><div class="m">neighbour</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">ch [ç]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('leicht')"><div class="w">leicht</div><div class="m">light</div></div>
+            <div class="w-item" onclick="speak('nicht')"><div class="w">nicht</div><div class="m">not, naught</div></div>
+            <div class="w-item" onclick="speak('Kirche')"><div class="w">Kirche</div><div class="m">church</div></div>
+            <div class="w-item" onclick="speak('Mönch')"><div class="w">Mönch</div><div class="m">monk</div></div>
+            <div class="w-item" onclick="speak('München')"><div class="w">München</div><div class="m">Munich</div></div>
+            <div style="width:100%;height:0;"></div>
+            <div class="w-item" onclick="speak('welch')"><div class="w">welch</div><div class="m">which</div></div>
+            <div class="w-item" onclick="speak('Bisschen')"><div class="w">Bisschen</div><div class="m">(little) bite</div></div>
+            <div class="w-item" onclick="speak('mich')"><div class="w">mich</div><div class="m">me</div></div>
+            <div class="w-item" onclick="speak('jährlich')"><div class="w">jährlich</div><div class="m">yearly</div></div>
+            <div class="w-item" onclick="speak('wöchentlich')"><div class="w">wöchentlich</div><div class="m">weekly</div></div>
+          </div>
+        </div>
+        <!-- ch 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('Tochter - Töchter')">Tochter - Töchter <span class="en">daughter - daughters</span></div>
+        <div class="s-item" onclick="speak('Buch - Bücher')">Buch - Bücher <span class="en">book - books</span></div>
+        <div class="s-item" onclick="speak('Macht nichts.')">Macht nichts. <span class="en">It doesn't matter.</span></div>
+        <div class="s-item" onclick="speak('Ich liebe dich.')">Ich liebe dich. <span class="en">I love thee (you).</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- ig, chs, x, h -->
+    <div class="ph-block">
+      <div class="ph-main" style="font-size:18px;text-align:center">-ig<br>chs<br>x<br>h</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">-ig [ɪç]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('durstig')"><div class="w">durstig</div><div class="m">thirsty</div></div>
+            <div class="w-item" onclick="speak('Honig')"><div class="w">Honig</div><div class="m">honey</div></div>
+            <div class="w-item" onclick="speak('heilig')"><div class="w">heilig</div><div class="m">holy</div></div>
+            <div class="w-item" onclick="speak('Käfig')"><div class="w">Käfig</div><div class="m">cage</div></div>
+            <div class="w-item" onclick="speak('allmächtig')"><div class="w">allmächtig</div><div class="m">almighty</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">chs [ks]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('sechs')"><div class="w">sechs</div><div class="m">six</div></div>
+            <div class="w-item" onclick="speak('Achse')"><div class="w">Achse</div><div class="m">axis</div></div>
+            <div class="w-item" onclick="speak('Fuchs')"><div class="w">Fuchs</div><div class="m">fox</div></div>
+            <div class="w-item" onclick="speak('Ochse')"><div class="w">Ochse</div><div class="m">ox</div></div>
+            <div class="w-item" onclick="speak('Wachs')"><div class="w">Wachs</div><div class="m">wax</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">x [ks]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Taxi')"><div class="w">Taxi</div><div class="m">taxi</div></div>
+            <div class="w-item" onclick="speak('Text')"><div class="w">Text</div><div class="m">text</div></div>
+            <div class="w-item" onclick="speak('Axt')"><div class="w">Axt</div><div class="m">axe</div></div>
+            <div class="w-item" onclick="speak('Marx')"><div class="w">Marx</div><div class="m">Marx</div></div>
+            <div class="w-item" onclick="speak('Examen')"><div class="w">Examen</div><div class="m">exam</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">h [h]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Haus')"><div class="w">Haus</div><div class="m">house</div></div>
+            <div class="w-item" onclick="speak('hoffen')"><div class="w">hoffen</div><div class="m">hope</div></div>
+            <div class="w-item" onclick="speak('hoch')"><div class="w">hoch</div><div class="m">high</div></div>
+            <div class="w-item" onclick="speak('Hut')"><div class="w">Hut</div><div class="m">hat</div></div>
+            <div class="w-item" onclick="speak('Hygiene')"><div class="w">Hygiene</div><div class="m">hygiene</div></div>
+          </div>
+        </div>
+        <!-- -ig 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('König - Könige')">König - Könige <span class="en">king - kings</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- r -->
+    <div class="ph-block">
+      <div class="ph-main">r</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">r+ [ʁ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('drei')"><div class="w">drei</div><div class="m">three</div></div>
+            <div class="w-item" onclick="speak('Bruder')"><div class="w">Bruder</div><div class="m">brother</div></div>
+            <div class="w-item" onclick="speak('reich')"><div class="w">reich</div><div class="m">rich</div></div>
+            <div class="w-item" onclick="speak('Beere')"><div class="w">Beere</div><div class="m">berry</div></div>
+            <div class="w-item" onclick="speak('Karriere')"><div class="w">Karriere</div><div class="m">career</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">+r [ɐ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Herz')"><div class="w">Herz</div><div class="m">heart</div></div>
+            <div class="w-item" onclick="speak('kurz')"><div class="w">kurz</div><div class="m">short</div></div>
+            <div class="w-item" onclick="speak('Bart')"><div class="w">Bart</div><div class="m">beard</div></div>
+            <div class="w-item" onclick="speak('Bord')"><div class="w">Bord</div><div class="m">board</div></div>
+            <div class="w-item" onclick="speak('absurd')"><div class="w">absurd</div><div class="m">absurd</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">-r [ɐ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Ohr')"><div class="w">Ohr</div><div class="m">ear</div></div>
+            <div class="w-item" onclick="speak('Tor')"><div class="w">Tor</div><div class="m">door</div></div>
+            <div class="w-item" onclick="speak('erfrischen')"><div class="w">erfrischen</div><div class="m">refresh</div></div>
+            <div class="w-item" onclick="speak('vergessen')"><div class="w">vergessen</div><div class="m">forget</div></div>
+            <div class="w-item" onclick="speak('zerbrechen')"><div class="w">zerbrechen</div><div class="m">break</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">-er [ɐ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Mutter')"><div class="w">Mutter</div><div class="m">mother</div></div>
+            <div class="w-item" onclick="speak('Peter')"><div class="w">Peter</div><div class="m">Peter</div></div>
+            <div class="w-item" onclick="speak('Sommer')"><div class="w">Sommer</div><div class="m">summer</div></div>
+            <div class="w-item" onclick="speak('gestern')"><div class="w">gestern</div><div class="m">yesterday</div></div>
+            <div class="w-item" onclick="speak('Kindergarten')"><div class="w">Kindergarten</div><div class="m">kindergarten</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- s -->
+    <div class="ph-block">
+      <div class="ph-main">s</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">s+ [z]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Busen')"><div class="w">Busen</div><div class="m">bosom</div></div>
+            <div class="w-item" onclick="speak('Sieb')"><div class="w">Sieb</div><div class="m">sieve</div></div>
+            <div class="w-item" onclick="speak('sieben')"><div class="w">sieben</div><div class="m">seven</div></div>
+            <div class="w-item" onclick="speak('Rose')"><div class="w">Rose</div><div class="m">rose</div></div>
+            <div class="w-item" onclick="speak('Sonntag')"><div class="w">Sonntag</div><div class="m">Sunday</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">s [s]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Gast')"><div class="w">Gast</div><div class="m">guest</div></div>
+            <div class="w-item" onclick="speak('Westen')"><div class="w">Westen</div><div class="m">west</div></div>
+            <div class="w-item" onclick="speak('Wasser')"><div class="w">Wasser</div><div class="m">water</div></div>
+            <div class="w-item" onclick="speak('essen')"><div class="w">essen</div><div class="m">eat</div></div>
+            <div class="w-item" onclick="speak('besser')"><div class="w">besser</div><div class="m">better</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">ß [s]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Fuß')"><div class="w">Fuß</div><div class="m">foot</div></div>
+            <div class="w-item" onclick="speak('weiß')"><div class="w">weiß</div><div class="m">white</div></div>
+            <div class="w-item" onclick="speak('heiß')"><div class="w">heiß</div><div class="m">hot</div></div>
+            <div class="w-item" onclick="speak('Soße')"><div class="w">Soße</div><div class="m">sauce</div></div>
+            <div class="w-item" onclick="speak('schießen')"><div class="w">schießen</div><div class="m">shoot</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- v, w -->
+    <div class="ph-block">
+      <div class="ph-main" style="font-size:24px;text-align:center">v<br>w</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">v [f]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Vater')"><div class="w">Vater</div><div class="m">father</div></div>
+            <div class="w-item" onclick="speak('vier')"><div class="w">vier</div><div class="m">four</div></div>
+            <div class="w-item" onclick="speak('Volk')"><div class="w">Volk</div><div class="m">folk</div></div>
+            <div class="w-item" onclick="speak('Vogel')"><div class="w">Vogel</div><div class="m">fowl</div></div>
+            <div class="w-item" onclick="speak('bevor')"><div class="w">bevor</div><div class="m">before</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">v [v]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Vase')"><div class="w">Vase</div><div class="m">vase</div></div>
+            <div class="w-item" onclick="speak('Verb')"><div class="w">Verb</div><div class="m">verb</div></div>
+            <div class="w-item" onclick="speak('Villa')"><div class="w">Villa</div><div class="m">villa</div></div>
+            <div class="w-item" onclick="speak('Visum')"><div class="w">Visum</div><div class="m">visa</div></div>
+            <div class="w-item" onclick="speak('Alternative')"><div class="w">Alternative</div><div class="m">alternative</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">w [v]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('wo')"><div class="w">wo</div><div class="m">where</div></div>
+            <div class="w-item" onclick="speak('zwei')"><div class="w">zwei</div><div class="m">two</div></div>
+            <div class="w-item" onclick="speak('Witz')"><div class="w">Witz</div><div class="m">wit</div></div>
+            <div class="w-item" onclick="speak('wann')"><div class="w">wann</div><div class="m">when</div></div>
+            <div class="w-item" onclick="speak('weltweit')"><div class="w">weltweit</div><div class="m">worldwide</div></div>
+          </div>
+        </div>
+        <!-- v 模块的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('Alternative - alternativ')">Alternative - alternativ <span class="en">alternative - alternative</span></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- p, b -->
+    <div class="ph-block">
+      <div class="ph-main" style="font-size:24px;text-align:center">p<br>b</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">p [p]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Panda')"><div class="w">Panda</div><div class="m">panda</div></div>
+            <div class="w-item" onclick="speak('Punkt')"><div class="w">Punkt</div><div class="m">point</div></div>
+            <div class="w-item" onclick="speak('Pumpe')"><div class="w">Pumpe</div><div class="m">pump</div></div>
+            <div class="w-item" onclick="speak('Kap')"><div class="w">Kap</div><div class="m">cape</div></div>
+            <div class="w-item" onclick="speak('Prinzip')"><div class="w">Prinzip</div><div class="m">principle</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">pp [p]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Appetit')"><div class="w">Appetit</div><div class="m">appetite</div></div>
+            <div class="w-item" onclick="speak('Doppel')"><div class="w">Doppel</div><div class="m">double</div></div>
+            <div class="w-item" onclick="speak('Puppe')"><div class="w">Puppe</div><div class="m">puppet</div></div>
+            <div class="w-item" onclick="speak('Gruppe')"><div class="w">Gruppe</div><div class="m">group</div></div>
+            <div class="w-item" onclick="speak('Apparat')"><div class="w">Apparat</div><div class="m">apparatus</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">b [p]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('ab')"><div class="w">ab</div><div class="m">off</div></div>
+            <div class="w-item" onclick="speak('Dieb')"><div class="w">Dieb</div><div class="m">thief</div></div>
+            <div class="w-item" onclick="speak('gab')"><div class="w">gab</div><div class="m">gave</div></div>
+            <div class="w-item" onclick="speak('halb')"><div class="w">halb</div><div class="m">half</div></div>
+            <div class="w-item" onclick="speak('Kalb')"><div class="w">Kalb</div><div class="m">calf</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">b [b]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Biene')"><div class="w">Biene</div><div class="m">bee</div></div>
+            <div class="w-item" onclick="speak('Abend')"><div class="w">Abend</div><div class="m">evening</div></div>
+            <div class="w-item" onclick="speak('Bein')"><div class="w">Bein</div><div class="m">bone</div></div>
+            <div class="w-item" onclick="speak('Ball')"><div class="w">Ball</div><div class="m">ball</div></div>
+            <div class="w-item" onclick="speak('Brot')"><div class="w">Brot</div><div class="m">bread</div></div>
+            <div style="width:100%;height:0;"></div>
+            <div class="w-item" onclick="speak('Ebbe')"><div class="w">Ebbe</div><div class="m">ebb</div></div>
+            <div class="w-item" onclick="speak('Hobby')"><div class="w">Hobby</div><div class="m">hobby</div></div>
+            <div class="w-item" onclick="speak('Krabbe')"><div class="w">Krabbe</div><div class="m">crab</div></div>
+            <div class="w-item" onclick="speak('dribbeln')"><div class="w">dribbeln</div><div class="m">dribble</div></div>
+            <div class="w-item" onclick="speak('babbeln')"><div class="w">babbeln</div><div class="m">babble</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- t, d -->
+    <div class="ph-block">
+      <div class="ph-main" style="font-size:24px;text-align:center">t<br>d</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">t [t]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Tante')"><div class="w">Tante</div><div class="m">aunt</div></div>
+            <div class="w-item" onclick="speak('tanzen')"><div class="w">tanzen</div><div class="m">dance</div></div>
+            <div class="w-item" onclick="speak('taub')"><div class="w">taub</div><div class="m">deaf</div></div>
+            <div class="w-item" onclick="speak('Taube')"><div class="w">Taube</div><div class="m">dove</div></div>
+            <div class="w-item" onclick="speak('teuer')"><div class="w">teuer</div><div class="m">dear</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">tt [t]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Bett')"><div class="w">Bett</div><div class="m">bed</div></div>
+            <div class="w-item" onclick="speak('Mitte')"><div class="w">Mitte</div><div class="m">middle</div></div>
+            <div class="w-item" onclick="speak('fett')"><div class="w">fett</div><div class="m">fat</div></div>
+            <div class="w-item" onclick="speak('Wetter')"><div class="w">Wetter</div><div class="m">weather</div></div>
+            <div class="w-item" onclick="speak('dritt')"><div class="w">dritt</div><div class="m">third</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">th [t]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Thema')"><div class="w">Thema</div><div class="m">theme</div></div>
+            <div class="w-item" onclick="speak('Theater')"><div class="w">Theater</div><div class="m">theatre</div></div>
+            <div class="w-item" onclick="speak('Theorie')"><div class="w">Theorie</div><div class="m">theory</div></div>
+            <div class="w-item" onclick="speak('Sympathie')"><div class="w">Sympathie</div><div class="m">sympathy</div></div>
+            <div class="w-item" onclick="speak('Thron')"><div class="w">Thron</div><div class="m">throne</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">dt [t]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('lädt')"><div class="w">lädt</div><div class="m">loads</div></div>
+            <div class="w-item" onclick="speak('Stadt')"><div class="w">Stadt</div><div class="m">state</div></div>
+            <div class="w-item" onclick="speak('gewandt')"><div class="w">gewandt</div><div class="m">wended</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">d [t]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Mund')"><div class="w">Mund</div><div class="m">mouth</div></div>
+            <div class="w-item" onclick="speak('blind')"><div class="w">blind</div><div class="m">blind</div></div>
+            <div class="w-item" onclick="speak('Grund')"><div class="w">Grund</div><div class="m">ground</div></div>
+            <div class="w-item" onclick="speak('Wind')"><div class="w">Wind</div><div class="m">wind</div></div>
+            <div class="w-item" onclick="speak('Eid')"><div class="w">Eid</div><div class="m">oath</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">d [d]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Süden')"><div class="w">Süden</div><div class="m">south</div></div>
+            <div class="w-item" onclick="speak('Boden')"><div class="w">Boden</div><div class="m">bottom</div></div>
+            <div class="w-item" onclick="speak('Dach')"><div class="w">Dach</div><div class="m">thatch</div></div>
+            <div class="w-item" onclick="speak('Dosis')"><div class="w">Dosis</div><div class="m">dose</div></div>
+            <div class="w-item" onclick="speak('durch')"><div class="w">durch</div><div class="m">through</div></div>
+            <div style="width:100%;height:0;"></div>
+            <div class="w-item" onclick="speak('Buddel')"><div class="w">Buddel</div><div class="m">bottle</div></div>
+            <div class="w-item" onclick="speak('Paddel')"><div class="w">Paddel</div><div class="m">paddle</div></div>
+            <div class="w-item" onclick="speak('Pudding')"><div class="w">Pudding</div><div class="m">pudding</div></div>
+            <div class="w-item" onclick="speak('Widder')"><div class="w">Widder</div><div class="m">wether</div></div>
+            <div class="w-item" onclick="speak('addieren')"><div class="w">addieren</div><div class="m">add</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- k, g -->
+    <div class="ph-block">
+      <div class="ph-main" style="font-size:24px;text-align:center">k<br>g</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">k [k]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Kanne')"><div class="w">Kanne</div><div class="m">can</div></div>
+            <div class="w-item" onclick="speak('Bank')"><div class="w">Bank</div><div class="m">bank</div></div>
+            <div class="w-item" onclick="speak('Dank')"><div class="w">Dank</div><div class="m">thank(s)</div></div>
+            <div class="w-item" onclick="speak('Korn')"><div class="w">Korn</div><div class="m">corn</div></div>
+            <div class="w-item" onclick="speak('küssen')"><div class="w">küssen</div><div class="m">kiss</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ck [k]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('backen')"><div class="w">backen</div><div class="m">bake</div></div>
+            <div class="w-item" onclick="speak('Jacke')"><div class="w">Jacke</div><div class="m">jacket</div></div>
+            <div class="w-item" onclick="speak('Zucker')"><div class="w">Zucker</div><div class="m">sugar</div></div>
+            <div class="w-item" onclick="speak('Wrack')"><div class="w">Wrack</div><div class="m">wrack</div></div>
+            <div class="w-item" onclick="speak('Picknick')"><div class="w">Picknick</div><div class="m">picnic</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">-g [k]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Teig')"><div class="w">Teig</div><div class="m">dough</div></div>
+            <div class="w-item" onclick="speak('Zwerg')"><div class="w">Zwerg</div><div class="m">dwarf</div></div>
+            <div class="w-item" onclick="speak('Dialog')"><div class="w">Dialog</div><div class="m">dialogue</div></div>
+            <div class="w-item" onclick="speak('Tag')"><div class="w">Tag</div><div class="m">day</div></div>
+            <div class="w-item" onclick="speak('legt')"><div class="w">legt</div><div class="m">lays</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">g [g]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('genug')"><div class="w">genug</div><div class="m">enough</div></div>
+            <div class="w-item" onclick="speak('arrogant')"><div class="w">arrogant</div><div class="m">arrogant</div></div>
+            <div class="w-item" onclick="speak('Agent')"><div class="w">Agent</div><div class="m">agent</div></div>
+            <div class="w-item" onclick="speak('liegen')"><div class="w">liegen</div><div class="m">lie</div></div>
+            <div class="w-item" onclick="speak('beginnen')"><div class="w">beginnen</div><div class="m">begin</div></div>
+            <div style="width:100%;height:0;"></div>
+            <div class="w-item" onclick="speak('Roggen')"><div class="w">Roggen</div><div class="m">rye</div></div>
+            <div class="w-item" onclick="speak('Flagge')"><div class="w">Flagge</div><div class="m">flag</div></div>
+            <div class="w-item" onclick="speak('Dogge')"><div class="w">Dogge</div><div class="m">dog (mastiff)</div></div>
+            <div class="w-item" onclick="speak('schmuggeln')"><div class="w">schmuggeln</div><div class="m">smuggle</div></div>
+            <div class="w-item" onclick="speak('Aggression')"><div class="w">Aggression</div><div class="m">aggression</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- m, n, f, z -->
+    <div class="ph-block">
+      <div class="ph-main" style="font-size:20px;text-align:center">m<br>n<br>f<br>z</div>
+      <div class="ph-rules">
+        <!-- m -->
+        <div class="rule-row">
+          <div class="rule-tag">m [m]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Bombe')"><div class="w">Bombe</div><div class="m">bomb</div></div>
+            <div class="w-item" onclick="speak('normal')"><div class="w">normal</div><div class="m">normal</div></div>
+            <div class="w-item" onclick="speak('Arm')"><div class="w">Arm</div><div class="m">arm</div></div>
+            <div class="w-item" onclick="speak('Moment')"><div class="w">Moment</div><div class="m">moment</div></div>
+            <div class="w-item" onclick="speak('Heim')"><div class="w">Heim</div><div class="m">home</div></div>
+            <div style="width:100%;height:0;"></div>
+            <div class="w-item" onclick="speak('Damm')"><div class="w">Damm</div><div class="m">dam</div></div>
+            <div class="w-item" onclick="speak('Nummer')"><div class="w">Nummer</div><div class="m">number</div></div>
+            <div class="w-item" onclick="speak('Lamm')"><div class="w">Lamm</div><div class="m">lamb</div></div>
+            <div class="w-item" onclick="speak('Summe')"><div class="w">Summe</div><div class="m">sum</div></div>
+            <div class="w-item" onclick="speak('kommen')"><div class="w">kommen</div><div class="m">come</div></div>
+          </div>
+        </div>
+        <!-- n -->
+        <div class="rule-row">
+          <div class="rule-tag">n [n]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Nase')"><div class="w">Nase</div><div class="m">nose</div></div>
+            <div class="w-item" onclick="speak('Not')"><div class="w">Not</div><div class="m">need</div></div>
+            <div class="w-item" onclick="speak('tun')"><div class="w">tun</div><div class="m">do</div></div>
+            <div class="w-item" onclick="speak('naiv')"><div class="w">naiv</div><div class="m">naive</div></div>
+            <div class="w-item" onclick="speak('neu')"><div class="w">neu</div><div class="m">new</div></div>
+            <div style="width:100%;height:0;"></div>
+            <div class="w-item" onclick="speak('Henne')"><div class="w">Henne</div><div class="m">hen</div></div>
+            <div class="w-item" onclick="speak('Donnerstag')"><div class="w">Donnerstag</div><div class="m">Thursday</div></div>
+            <div class="w-item" onclick="speak('Zinn')"><div class="w">Zinn</div><div class="m">tin</div></div>
+            <div class="w-item" onclick="speak('Sinn')"><div class="w">Sinn</div><div class="m">sence</div></div>
+            <div class="w-item" onclick="speak('Nonne')"><div class="w">Nonne</div><div class="m">nun</div></div>
+          </div>
+        </div>
+        <!-- f -->
+        <div class="rule-row">
+          <div class="rule-tag">f [f]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('fein')"><div class="w">fein</div><div class="m">fine</div></div>
+            <div class="w-item" onclick="speak('Freund')"><div class="w">Freund</div><div class="m">friend</div></div>
+            <div class="w-item" onclick="speak('Tafel')"><div class="w">Tafel</div><div class="m">table</div></div>
+            <div class="w-item" onclick="speak('finden')"><div class="w">finden</div><div class="m">find</div></div>
+            <div class="w-item" onclick="speak('reif')"><div class="w">reif</div><div class="m">ripe</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ff [f]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Affe')"><div class="w">Affe</div><div class="m">ape</div></div>
+            <div class="w-item" onclick="speak('Waffe')"><div class="w">Waffe</div><div class="m">weapon</div></div>
+            <div class="w-item" onclick="speak('Effekt')"><div class="w">Effekt</div><div class="m">effect</div></div>
+            <div class="w-item" onclick="speak('Affäre')"><div class="w">Affäre</div><div class="m">affair</div></div>
+            <div class="w-item" onclick="speak('Riff')"><div class="w">Riff</div><div class="m">reef</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ph [f]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Alphabet')"><div class="w">Alphabet</div><div class="m">alphabet</div></div>
+            <div class="w-item" onclick="speak('Atmosphäre')"><div class="w">Atmosphäre</div><div class="m">atmosphere</div></div>
+            <div class="w-item" onclick="speak('Phänomen')"><div class="w">Phänomen</div><div class="m">phenomenon</div></div>
+            <div class="w-item" onclick="speak('Philosophie')"><div class="w">Philosophie</div><div class="m">philosophy</div></div>
+            <div class="w-item" onclick="speak('Physik')"><div class="w">Physik</div><div class="m">physics</div></div>
+          </div>
+        </div>
+        <!-- z -->
+        <div class="rule-row">
+          <div class="rule-tag">z [ts]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Zwilling')"><div class="w">Zwilling</div><div class="m">twin</div></div>
+            <div class="w-item" onclick="speak('Benz')"><div class="w">Benz</div><div class="m">Benz</div></div>
+            <div class="w-item" onclick="speak('zusammen')"><div class="w">zusammen</div><div class="m">togather</div></div>
+            <div class="w-item" onclick="speak('Prinzessin')"><div class="w">Prinzessin</div><div class="m">princess</div></div>
+            <div class="w-item" onclick="speak('Pflanze')"><div class="w">Pflanze</div><div class="m">plant</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">tz [ts]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('sitzen')"><div class="w">sitzen</div><div class="m">sit</div></div>
+            <div class="w-item" onclick="speak('Netz')"><div class="w">Netz</div><div class="m">net</div></div>
+            <div class="w-item" onclick="speak('Platz')"><div class="w">Platz</div><div class="m">place, plaza</div></div>
+            <div class="w-item" onclick="speak('Blitzkrieg')"><div class="w">Blitzkrieg</div><div class="m">blitzkrieg</div></div>
+            <div class="w-item" onclick="speak('Katze')"><div class="w">Katze</div><div class="m">cat</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ts [ts]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('vorwärts')"><div class="w">vorwärts</div><div class="m">forward(s)</div></div>
+            <div class="w-item" onclick="speak('Geburtstag')"><div class="w">Geburtstag</div><div class="m">birthday</div></div>
+            <div class="w-item" onclick="speak('bereits')"><div class="w">bereits</div><div class="m">already</div></div>
+            <div class="w-item" onclick="speak('nichts')"><div class="w">nichts</div><div class="m">nothing</div></div>
+            <div class="w-item" onclick="speak('Rätsel')"><div class="w">Rätsel</div><div class="m">riddle</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ds [ts]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Lands')"><div class="w">Lands</div><div class="m">(of) land</div></div>
+            <div class="w-item" onclick="speak('Monds')"><div class="w">Monds</div><div class="m">(of the) moon</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ti+ [tsi]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Patient')"><div class="w">Patient</div><div class="m">patient</div></div>
+            <div class="w-item" onclick="speak('partiell')"><div class="w">partiell</div><div class="m">partial</div></div>
+            <div class="w-item" onclick="speak('Aktion')"><div class="w">Aktion</div><div class="m">action</div></div>
+            <div class="w-item" onclick="speak('Position')"><div class="w">Position</div><div class="m">position</div></div>
+            <div class="w-item" onclick="speak('Tradition')"><div class="w">Tradition</div><div class="m">tradition</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- l, j, sch, tsch, st, sp, ng, pf, qu -->
+    <div class="ph-block">
+      <div class="ph-main" style="font-size:16px;text-align:center">l, j<br>sch<br>tsch<br>st/sp<br>ng/pf<br>qu</div>
+      <div class="ph-rules">
+        <div class="rule-row">
+          <div class="rule-tag">l [l]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Linie')"><div class="w">Linie</div><div class="m">line</div></div>
+            <div class="w-item" onclick="speak('letzt')"><div class="w">letzt</div><div class="m">last</div></div>
+            <div class="w-item" onclick="speak('Plan')"><div class="w">Plan</div><div class="m">plan</div></div>
+            <div class="w-item" onclick="speak('Zelle')"><div class="w">Zelle</div><div class="m">cell</div></div>
+            <div class="w-item" onclick="speak('Halle')"><div class="w">Halle</div><div class="m">hall</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag dark">l [ɫ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Apfel')"><div class="w">Apfel</div><div class="m">apple</div></div>
+            <div class="w-item" onclick="speak('Molekül')"><div class="w">Molekül</div><div class="m">molecule</div></div>
+            <div class="w-item" onclick="speak('Wal')"><div class="w">Wal</div><div class="m">whale</div></div>
+            <div class="w-item" onclick="speak('als')"><div class="w">als</div><div class="m">as</div></div>
+            <div class="w-item" onclick="speak('Tafeln')"><div class="w">Tafeln</div><div class="m">tables</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">j [j]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('ja')"><div class="w">ja</div><div class="m">yes</div></div>
+            <div class="w-item" onclick="speak('Juni')"><div class="w">Juni</div><div class="m">June</div></div>
+            <div class="w-item" onclick="speak('jung')"><div class="w">jung</div><div class="m">young</div></div>
+            <div class="w-item" onclick="speak('Januar')"><div class="w">Januar</div><div class="m">January</div></div>
+            <div class="w-item" onclick="speak('Sojasoße')"><div class="w">Sojasoße</div><div class="m">soy sauce</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">sch [ʃ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Schiff')"><div class="w">Schiff</div><div class="m">ship</div></div>
+            <div class="w-item" onclick="speak('scharf')"><div class="w">scharf</div><div class="m">sharp</div></div>
+            <div class="w-item" onclick="speak('Schlaf')"><div class="w">Schlaf</div><div class="m">sleep</div></div>
+            <div class="w-item" onclick="speak('mischen')"><div class="w">mischen</div><div class="m">mix</div></div>
+            <div class="w-item" onclick="speak('Scheiße')"><div class="w">Scheiße</div><div class="m">shit</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">tsch [tʃ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Kitsch')"><div class="w">Kitsch</div><div class="m">kitsch</div></div>
+            <div class="w-item" onclick="speak('Deutsch')"><div class="w">Deutsch</div><div class="m">Dutch</div></div>
+            <div class="w-item" onclick="speak('tschüs')"><div class="w">tschüs</div><div class="m">adieu</div></div>
+            <div class="w-item" onclick="speak('Gletscher')"><div class="w">Gletscher</div><div class="m">glacier</div></div>
+            <div class="w-item" onclick="speak('zwitschern')"><div class="w">zwitschern</div><div class="m">twitter</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">st- [ʃt]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Student')"><div class="w">Student</div><div class="m">student</div></div>
+            <div class="w-item" onclick="speak('Straße')"><div class="w">Straße</div><div class="m">street</div></div>
+            <div class="w-item" onclick="speak('stehlen')"><div class="w">stehlen</div><div class="m">steal</div></div>
+            <div class="w-item" onclick="speak('verstehen')"><div class="w">verstehen</div><div class="m">understand</div></div>
+            <div class="w-item" onclick="speak('Gestalt')"><div class="w">Gestalt</div><div class="m">gestalt</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">sp- [ʃp]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Sport')"><div class="w">Sport</div><div class="m">sport</div></div>
+            <div class="w-item" onclick="speak('spinnen')"><div class="w">spinnen</div><div class="m">spin</div></div>
+            <div class="w-item" onclick="speak('Speer')"><div class="w">Speer</div><div class="m">spear</div></div>
+            <div class="w-item" onclick="speak('sprechen')"><div class="w">sprechen</div><div class="m">speak</div></div>
+            <div class="w-item" onclick="speak('gesprochen')"><div class="w">gesprochen</div><div class="m">spoken</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">ng [ŋ]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('lang')"><div class="w">lang</div><div class="m">long</div></div>
+            <div class="w-item" onclick="speak('Hunger')"><div class="w">Hunger</div><div class="m">hunger</div></div>
+            <div class="w-item" onclick="speak('Finger')"><div class="w">Finger</div><div class="m">finger</div></div>
+            <div class="w-item" onclick="speak('singen')"><div class="w">singen</div><div class="m">sing</div></div>
+            <div class="w-item" onclick="speak('Englisch')"><div class="w">Englisch</div><div class="m">English</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">pf [pf]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Pfad')"><div class="w">Pfad</div><div class="m">path</div></div>
+            <div class="w-item" onclick="speak('Pfund')"><div class="w">Pfund</div><div class="m">pound</div></div>
+            <div class="w-item" onclick="speak('Pfeife')"><div class="w">Pfeife</div><div class="m">pipe</div></div>
+            <div class="w-item" onclick="speak('Tropfen')"><div class="w">Tropfen</div><div class="m">drop</div></div>
+            <div class="w-item" onclick="speak('Pfau')"><div class="w">Pfau</div><div class="m">pea(cock)</div></div>
+          </div>
+        </div>
+        <div class="rule-row">
+          <div class="rule-tag">qu [kv]</div>
+          <div class="word-list">
+            <div class="w-item" onclick="speak('Quote')"><div class="w">Quote</div><div class="m">quota</div></div>
+            <div class="w-item" onclick="speak('quitt')"><div class="w">quitt</div><div class="m">quits</div></div>
+            <div class="w-item" onclick="speak('Quarz')"><div class="w">Quarz</div><div class="m">quartz</div></div>
+            <div class="w-item" onclick="speak('Qualität')"><div class="w">Qualität</div><div class="m">quality</div></div>
+            <div class="w-item" onclick="speak('Qualifikation')"><div class="w">Qualifikation</div><div class="m">qualification</div></div>
+          </div>
+        </div>
+        <!-- 杂项组合的例句 -->
+      <div class="ph-sentences">
+        <div class="s-item" onclick="speak('Ich denke, also bin ich.')">Ich denke, also bin ich. <span class="en">I think, therefore I am.</span></div>
+        <div class="s-item" onclick="speak('ist')">ist <span class="en">is</span></div>
+        <div class="s-item" onclick="speak('Post')">Post <span class="en">post</span></div>
+        <div class="s-item" onclick="speak('Katastrophe')">Katastrophe <span class="en">catastrophe</span></div>
+      </div>
+      </div>
+    </div>
+
+  </div> <!-- End Consonants -->
+
+  <!-- ================= 语音测试 ================= -->
+  <div class="section" id="sec-test">
+    <div style="background:var(--blue);color:white;padding:16px 20px;border-radius:8px;margin-bottom:20px;">
+      <b>语音测试</b>：点击任意一行即可自动朗读该行所有单词。
+    </div>
+    <div class="test-grid" id="testGrid">
+      <!-- Generated via JS -->
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ================= 数据源 =================
+const abcData = [
+  {l:'Aa', i:'[a:]'}, {l:'Bb', i:'[be:]'}, {l:'Cc', i:'[tse:]'}, {l:'Dd', i:'[de:]'},
+  {l:'Ee', i:'[e:]'}, {l:'Ff', i:'[ɛf]'}, {l:'Gg', i:'[ge:]'}, {l:'Hh', i:'[ha:]'},
+  {l:'Ii', i:'[i:]'}, {l:'Jj', i:'[jɔt]'}, {l:'Kk', i:'[ka:]'}, {l:'Ll', i:'[ɛɫ]'},
+  {l:'Mm', i:'[ɛm]'}, {l:'Nn', i:'[ɛn]'}, {l:'Oo', i:'[o:]'}, {l:'Pp', i:'[pe:]'},
+  {l:'Qq', i:'[ku:]'}, {l:'Rr', i:'[ɛR]'}, {l:'Ss', i:'[ɛs]'}, {l:'Tt', i:'[te:]'},
+  {l:'Uu', i:'[u:]'}, {l:'Vv', i:'[faʊ]'}, {l:'Ww', i:'[ve:]'}, {l:'Xx', i:'[ɪks]'},
+  {l:'Yy', i:"['ʏpsilɔn]"}, {l:'Zz', i:'[tsɛt]'}, {l:'Ää', i:'[ɛ:]'}, {l:'Öö', i:'[ø:]'},
+  {l:'Üü', i:'[y:]'}, {l:'ß', i:"[ɛs'tsɛt]"}
+];
+
+const testLines = [
+  "Fabrik, Reis, richtig, Sekretärin, Umstrukturierung",
+  "Problem, Apparat, strategisch, Ministerium, Spezialität",
+  "ist, arbeitet, nach, Herbst, Psychologie",
+  "was, wer, wir, wann, Wagen",
+  "Kaffee, Tee, LKW, gehen, beleben",
+  "ich, bitten, dick, in, irgendwann",
+  "Hose, heiß, Hut, haben, Haus",
+  "Bild, Geld, Eltern, Gabel, hell, Film",
+  "China, schlecht, geschäftlich, München, zwanzig",
+  "Sie, seit, süß, Soße, saufen",
+  "bieten, bitten, beten, Betten",
+  "Kinder, super, zerkleinern, gestern, ändern"
+];
+
+// ================= 专用发音函数 =================
+function speakTrick(displayTxt, trickTxt, type) {
+  speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(trickTxt);
+  utt.lang = 'de-DE';
+  if (selectedVoice) utt.voice = selectedVoice;
+  
+  if (type === 'long') {
+    utt.rate = rate * 0.6; 
+  } else if (type === 'short') {
+    utt.rate = rate * 1.6; 
+  } else {
+    utt.rate = rate;
+  }
+  
+  speechSynthesis.speak(utt);
+  showToast('🔊 音标: ' + displayTxt);
+}
+
+function speakAbbr(txt) {
+  let trick = txt;
+  if (txt !== "GmbH" && txt !== "DAAD") {
+    trick = txt.split('').join(' '); 
+  }
+  speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(trick);
+  utt.lang = 'de-DE';
+  if (selectedVoice) utt.voice = selectedVoice;
+  utt.rate = rate;
+  speechSynthesis.speak(utt);
+  showToast('🔊 正在朗读缩略词: ' + txt);
+}
+
+function speak(text) {
+  speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'de-DE';
+  if (selectedVoice) utt.voice = selectedVoice;
+  utt.rate = rate;
+  speechSynthesis.speak(utt);
+  showToast('🔊 正在朗读: ' + text);
+}
+
+// ================= 初始化与渲染 =================
+function renderData() {
+  // 1. 主要长短音
+  const vlTbody = document.getElementById('vlTbody');
+  const vlData = [
+    { l: 'a', long: '[a:]', short: '[a]', tLong: 'aaah', tShort: 'a' },
+    { l: 'e', long: '[e:]', short: '[ɛ]', tLong: 'eeeh', tShort: 'ä' },
+    { l: 'i', long: '[i:]', short: '[ɪ]', tLong: 'iiih', tShort: 'i' },
+    { l: 'o', long: '[o:]', short: '[ɔ]', tLong: 'oooh', tShort: 'o' },
+    { l: 'u', long: '[u:]', short: '[ʊ]', tLong: 'uuuh', tShort: 'u' },
+    { l: 'y', long: '[y:]', short: '[ʏ]', tLong: 'üüüh', tShort: 'ü' } 
+  ];
+  vlData.forEach(item => {
+    let tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-size:24px;font-weight:bold;color:var(--main-letter)">${item.l}</td>
+      <td><button class="vl-btn" onclick="speakTrick('${item.long}', '${item.tLong}', 'long')">${item.long}</button></td>
+      <td><button class="vl-btn" onclick="speakTrick('${item.short}', '${item.tShort}', 'short')">${item.short}</button></td>
+    `;
+    vlTbody.appendChild(tr);
+  });
+
+  // 2. 缩略词
+  const abbrContainer = document.getElementById('abbrGrid');
+  const abbrData = [
+    "EU", "DB", "AG", "VW", "WC", "SPD", "CDU", "CSU", "FDP",
+    "BRD", "DDR", "LKW", "EDV", "DSH", "USA", "DAAD", "CD", "GmbH",
+    "BWL", "WG", "ZOB", "ARD", "ZDF", "ICE", "BIP", "PC", "NSDAP"
+  ];
+  abbrData.forEach(abbr => {
+    let card = document.createElement('div');
+    card.className = 'abbr-card';
+    card.textContent = abbr;
+    card.onclick = () => speakAbbr(abbr);
+    abbrContainer.appendChild(card);
+  });
+
+  // 3. 字母表
+  const abcContainer = document.getElementById('abcGrid');
+  abcData.forEach(item => {
+    let card = document.createElement('div');
+    card.className = 'abc-card';
+    card.onclick = () => speak(item.l.charAt(0));
+    card.innerHTML = `<div class="let">${item.l}</div><div class="ipa">${item.i}</div>`;
+    abcContainer.appendChild(card);
+  });
+
+  // 4. 语音测试 (单词独立发音)
+  const testContainer = document.getElementById('testGrid');
+  testLines.forEach((line, idx) => {
+    let row = document.createElement('div');
+    row.className = 'test-row';
+    row.style.cursor = 'default'; // 防止点击整行
+    let numStr = `<div class="num">${idx + 1}、</div>`;
+    
+    // 将句子按逗号拆分，生成独立的 span
+    let wordsHtml = line.split(',').map(w => w.trim()).map(w => 
+      `<span class="test-word" onclick="speak('${w}')">${w}</span>`
+    ).join('<span style="color:#ccc; margin: 0 4px;">,</span>');
+    
+    row.innerHTML = numStr + `<div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">${wordsHtml}</div>`;
+    testContainer.appendChild(row);
+  });
+}
+
+// ================= Tab 切换 =================
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('sec-' + id).classList.add('active');
+}
+
+// ================= 语音引擎设置 =================
+let voices = [];
+let selectedVoice = null;
+let rate = 0.8;
+
+function loadVoices() {
+  voices = speechSynthesis.getVoices();
+  const sel = document.getElementById('voiceSelect');
+  const de = voices.filter(v => v.lang.startsWith('de'));
+  const all = voices;
+  sel.innerHTML = '';
+  
+  if (de.length > 0) {
+    de.forEach(v => {
+      let opt = document.createElement('option');
+      opt.value = v.name; opt.textContent = v.name + ' (' + v.lang + ')';
+      sel.appendChild(opt);
+    });
+    selectedVoice = de[0];
+  } else {
+    all.forEach(v => {
+      let opt = document.createElement('option');
+      opt.value = v.name; opt.textContent = v.name + ' (' + v.lang + ')';
+      sel.appendChild(opt);
+    });
+    if (all.length) selectedVoice = all[0];
+  }
+}
+
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+function updateVoice() {
+  const sel = document.getElementById('voiceSelect');
+  selectedVoice = voices.find(v => v.name === sel.value) || null;
+}
+
+function updateRate(v) {
+  rate = parseFloat(v);
+  document.getElementById('rateVal').textContent = v + '×';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ================= 录音比对功能 =================
+let globalRecorder = null;
+let audioChunks = [];
+let currentMic = null;
+
+async function toggleRecord(micBtn) {
+  // 如果有正在录音的其他按钮，先提示
+  if (currentMic && currentMic !== micBtn && globalRecorder && globalRecorder.state === 'recording') {
+    showToast("请先停止当前录音");
+    return;
+  }
+
+  // 停止并播放
+  if (micBtn.classList.contains('recording')) {
+    globalRecorder.stop();
+    micBtn.classList.remove('recording');
+    currentMic = null;
+    showToast("🎤 录音结束，正在播放...");
+  } else {
+    // 开始录音
+    try {
+      if (!globalRecorder) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        globalRecorder = new MediaRecorder(stream);
+        globalRecorder.ondataavailable = e => audioChunks.push(e.data);
+        globalRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          const audio = new Audio(URL.createObjectURL(audioBlob));
+          audio.play(); // 录音结束后自动播放
+        };
+      }
+      audioChunks = [];
+      globalRecorder.start();
+      micBtn.classList.add('recording');
+      currentMic = micBtn;
+      showToast("🔴 开始录音 (再次点击麦克风结束并回放)");
+    } catch (err) {
+      showToast("无法访问麦克风，请检查浏览器权限");
+    }
+  }
+}
+
+// 自动给所有发音元素注入麦克风
+function injectMics() {
+  // 精确查找到所有：长短音按钮、缩略词卡片、字母卡片、单词、例句、测试单词
+  const targets = document.querySelectorAll('.vl-btn, .abbr-card, .abc-card, .w-item, .s-item, .test-word');
+  
+  targets.forEach(el => {
+    el.classList.add('has-mic');
+    let mic = document.createElement('span');
+    mic.className = 'mic-btn';
+    mic.innerHTML = '🎤';
+    mic.title = "点击录音对比";
+    
+    // 阻止冒泡，防止点击麦克风时触发外层的单词发音
+    mic.onclick = (e) => { 
+      e.stopPropagation(); 
+      toggleRecord(mic); 
+    };
+    el.appendChild(mic);
+  });
+}
+
+// 页面加载完成后，先渲染数据，稍微延迟一下注入麦克风
+window.onload = () => {
+  renderData();
+  setTimeout(injectMics, 100); 
+};
+</script>
+</body>
+</html>
